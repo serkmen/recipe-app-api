@@ -1,21 +1,27 @@
 FROM python:3.9-alpine3.13
 LABEL maintainer="serkmen"
 
-#suggested for python projects:see python logs immediately
+# Suggested for python projects:see python logs immediately
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./app  /app
-#path that commands run
+# Path that commands run
 WORKDIR /app
 EXPOSE 8000
 
-#single run commands mean single layer.
+# Single run commands mean single layer.
 
-#creates new python virtual environment
+# Creates new python virtual environment
+ARG DEV=false
 RUN python -m venv /py && \ 
     /py/bin/pip install --upgrade pip && \
     /py/bin/pip install -r /tmp/requirements.txt &&  \
+    # Shell statement to check DEV argument
+    if [ $DEV = "true" ]; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+    fi && \
     #keep your image lightweight. Clean temporary files as building image
     rm -rf /tmp/ && \
     #add a new user. Do not user default root user (security!)

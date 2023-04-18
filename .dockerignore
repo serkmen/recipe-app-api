@@ -1,0 +1,16 @@
+# Do not include in docker context
+# Git
+.git 
+.gitignore
+
+# Docker
+.docker 
+
+# Python
+app/_pycache_/
+app/*/_pycache_/
+app/*/*/_pycache_/
+app/*/*/*/_pycache_/
+.env/
+.venv/
+venv/
