@@ -1,8 +1,5 @@
-"""
-Sample Tests
-Test Runner only looks for methods starting with 'test' prefix
-"""
-"""SimpleTestCase for no database oprations"""
+"""Sample Tests : Test Runner only looks for methods starting with 'test' prefix.
+SimpleTestCase for no database oprations."""
 from django.test import SimpleTestCase
 from app import calc
 
@@ -17,4 +14,3 @@ class CalcTests(SimpleTestCase):
         """Test subtracting numbers."""
         res = calc.subtract(10, 15)
         self.assertEqual(res, 5)
-
