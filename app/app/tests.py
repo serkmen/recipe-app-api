@@ -1,7 +1,8 @@
-"""Sample Tests : Test Runner only looks for methods starting with 'test' prefix.
-SimpleTestCase for no database oprations."""
+"""Sample Tests : Test Runner only looks for methods starting with 'test'
+prefix. SimpleTestCase for no database oprations."""
 from django.test import SimpleTestCase
 from app import calc
+
 
 class CalcTests(SimpleTestCase):
     """Test the calc module"""
