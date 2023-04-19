@@ -18,13 +18,18 @@ ARG DEV=false
 RUN python -m venv /py && \ 
     /py/bin/pip install --upgrade pip && \
     /py/bin/pip install -r /tmp/requirements.txt &&  \
+    # Add dependency packages for Psycopg2 PG adapter for Django
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual .tmp-build-deps && \
+        build-base postgresql-dev musl-dev && \
     # Shell statement to check DEV argument
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
-    #keep your image lightweight. Clean temporary files as building image
+    # Keep your image lightweight. Clean temporary files as building image
     rm -rf /tmp/ && \
-    #add a new user. Do not user default root user (security!)
+    apk del .tmp-build-deps && \
+    # Add a new user. Do not user default root user (security!)
     adduser \
         --disabled-password \
         --no-create-home \
