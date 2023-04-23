@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
+    PermissionsMixin,
     )
 
 # AbstractBaseUser:Contains functionality for authentication system
@@ -24,14 +25,24 @@ class UserManager(BaseUserManager):
 
         return user
 
+    # Function name is important. Django CLI will use method with this name
+    def create_superuser(self, email, password):
+        """Create and return the super-user"""
+        user = self.create_user(email, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self.db)
 
-class User(AbstractBaseUser, PermissionError):
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     # Determine if user can login as Django Admin
-    is_staff = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     # Assign UserManager to custom User Class
     objects = UserManager()
     # The field that will be used for authentication.
