@@ -9,3 +9,10 @@ docker-compose run --rm app sh -c "python manage.py startapp core"
 # Call a custom command && linting check
 docker-compose run --rm app sh -c "python manage.py wait_for_db"
 docker-compose run --rm app sh -c "python manage.py wait_for_db && flake8"
+# Run migrations after implementing custom users
+docker-compose run --rm app sh -c "python manage.py makemigrations"
+# Migrate database
+docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py migrate"
+# Flush database
+docker volume ls 
+docker-compose down && docker volume rm <volume-name>
