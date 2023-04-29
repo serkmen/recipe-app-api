@@ -10,6 +10,8 @@ from rest_framework import status
 
 # URL will be 'create' endpoint of 'user' app
 CREATE_USER_URL = reverse('user:create')
+# URL will be 'token' endpoint of 'user' API
+TOKEN_URL = reverse('user:token')
 
 # *args -> pass a non-keyworded variable number of arguments to a function.
 # The variable that associated with * becomes iterable (tube).
@@ -69,3 +71,50 @@ class PublicUserApiTests(TestCase):
             email=payload['email']
         ).exists()
         self.assertFalse(user_exists)
+
+    def test_create_token_for_user(self):
+        """Test generates token for valid credentials."""
+        # Create a user in test database
+        user_details = {
+            'name': 'Test Name',
+            'email': 'test@example.com',
+            'password': 'test-user-password123',
+        }
+        create_user(**user_details)
+
+        payload = {
+            'email': user_details['email'],
+            'password': user_details['password'],
+        }
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_create_token_bad_credentials(self):
+        """Tests returns error if credentials invalid."""
+        # Create a user in test database
+        user_details = {
+            'email': 'test@example.com',
+            'password': 'goodpass',
+        }
+        create_user(**user_details)
+
+        payload = {
+            'email': user_details['email'],
+            'password': 'badpass',
+        }
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_token_blank_password(self):
+        """Tests returns error if password is blank."""
+
+        payload = {
+            'email': 'test@example.com',
+            'password': '',
+        }
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn('token', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
